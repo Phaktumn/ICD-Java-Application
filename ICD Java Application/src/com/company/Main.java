@@ -32,16 +32,12 @@ public class Main extends Thread {
     public static void main(String[] args) throws IOException, InterruptedException {
         Url = args[0];
         Iterations = Integer.parseInt (args[1]);
-
+        Start ();
         for (int i = 0; i < Iterations; i++) {
             new Main().start();
         }
 
-        Thread.sleep(100);
-
-        Start ();
-
-        Thread.sleep(4000);
+        Thread.sleep(10000);
 
         Pair <Double, Double> calculation = Calculate ();
         Print (calculation.getKey (), calculation.getValue ());
@@ -55,17 +51,18 @@ public class Main extends Thread {
 
             long before = System.nanoTime();
             try {
-                URL website = new URL(Url);
+                URL website = new URL("http://192.168.40.145");
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-                FileOutputStream fos = new FileOutputStream("information.html");
+                FileOutputStream fos = new FileOutputStream("information"+n+".file");
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                fos.close();
             }
             catch (IOException e) {
                 e.printStackTrace ();
             }
             long after = System.nanoTime();
-
             regista (before, after);
+            next();
         }
     }
 
