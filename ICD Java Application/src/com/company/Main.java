@@ -2,9 +2,12 @@ package com.company;
 
 import javafx.util.Pair;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 public class Main extends Thread {
 
@@ -20,6 +23,7 @@ public class Main extends Thread {
     private static synchronized int next() {
         return n++;
     }
+
 
     public static synchronized void Start() {
         start = true;
@@ -51,7 +55,10 @@ public class Main extends Thread {
 
             long before = System.nanoTime();
             try {
-                Request (Url);
+                URL website = new URL(Url);
+                ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+                FileOutputStream fos = new FileOutputStream("information.html");
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             }
             catch (IOException e) {
                 e.printStackTrace ();
