@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Main {
+public class Main extends Thread {
 
     private static String Url;
     private static int Iterations;
@@ -21,22 +21,45 @@ public class Main {
         return n++;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static synchronized void Start() {
+        start = true;
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
         Url = args[0];
         Iterations = Integer.parseInt (args[1]);
 
-        start = true;
-
         for (int i = 0; i < Iterations; i++) {
+            new Main().start();
+        }
+
+        Thread.sleep(100);
+
+        Start ();
+
+        Thread.sleep(4000);
+
+        Pair <Double, Double> calculation = Calculate ();
+        Print (calculation.getKey (), calculation.getValue ());
+
+        System.exit(0);
+
+    }
+
+    public void run() {
+        while(true) {
 
             long before = System.nanoTime();
-            Request (Url);
+            try {
+                Request (Url);
+            }
+            catch (IOException e) {
+                e.printStackTrace ();
+            }
             long after = System.nanoTime();
 
             regista (before, after);
         }
-        Pair <Double, Double> calculation = Calculate ();
-        Print (calculation.getKey (), calculation.getValue ());
     }
 
     private static void Request(String url) throws IOException {
